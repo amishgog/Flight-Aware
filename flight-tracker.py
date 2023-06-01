@@ -9,8 +9,11 @@ import random
 lat_min, lat_max = 18.465208, 58.465208
 long_min, long_max = 47.076825, 87.076825
 
-home_lat = "*****"
-home_long = "*****"
+home_lat = "******"
+home_long = "******"
+
+# Set to store tracked airplanes
+tracked_airplanes = set()
 
 # Function to fetch flight data
 def fetch_flight_data():
@@ -33,10 +36,20 @@ def fetch_flight_data():
         velocity = flight_df['velocity']
         for long, lat, sign, alt, orig, vel in zip(longitude, latitude, call_sign, altitude, origin, velocity):
             if pd.notna(alt) and pd.notna(long) and pd.notna(lat) and pd.notna(orig) and pd.notna(vel):
-                if abs(lat - home_lat) <= 0.08 and abs(long - home_long) <= 0.08 and orig != "India": 
+                if (
+                    abs(lat - home_lat) <= 0.06
+                    and abs(long - home_long) <= 0.06
+                    and orig != "India"
+                    and sign not in tracked_airplanes
+                ):
                     send_notification(sign, alt, orig, vel)
+                    tracked_airplanes.add(sign)
     except JSONDecodeError as e:
         print("Error decoding JSON:", e)
+
+# Rest of the code...
+
+
 
 # Function to send notification
 def send_notification(call_sign, altitude, origin, velocity):
