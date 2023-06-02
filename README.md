@@ -2,14 +2,13 @@
 
 ## Description
 
-Flight Aware is a script written in Python that utilizes the OpenSky Network API to fetch live flight data. It defines a tracking area using latitude and longitude boundaries, and retrieves aircraft information within that area. The script filters the data, checks if the aircraft is within a certain proximity to a home location, and sends a notification using AppleScript(osascript) with flight details if the conditions are met. The notification includes the flight callsign, altitude, origin, and velocity. It opens a web browser with a link to track the flight on FlightAware for more information. Additionaly it uses Pushbullet to send notifications about flights overhead to my phone.
+Flight Aware is a script written in Python that utilizes the OpenSky Network API to fetch live flight data. It defines a tracking area using latitude and longitude boundaries, and retrieves aircraft information within that area. The script filters the data, checks if the aircraft is within a certain proximity to a home location, and sends a notification using AppleScript(osascript) with flight details if the conditions are met. The notification includes the flight callsign, altitude, origin, and velocity. It opens a web browser with a link to track the flight on FlightAware for more information.
 
 ## Dependencies
 
 - Python 3.x
 - Requests library: `pip install requests`
 - pandas library: `pip install pandas`
-- pushbullet.py:  `pip install pushbullet.py`
 
 ## Usage
 
