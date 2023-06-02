@@ -6,10 +6,6 @@ import pandas as pd
 import random
 from pushbullet import Pushbullet
 
-API_KEY = "*******"
-
-pb = Pushbullet(API_KEY)
-
 
 
 # Tracking area
@@ -32,9 +28,7 @@ def fetch_flight_data():
 
         col_name = ['icao24', 'callsign', 'origin_country', 'time_position', 'last_contact', 'long', 'lat',
                     'baro_altitude', 'on_ground', 'velocity']
-        flight_df = pd.DataFrame(response['states'])
-        flight_df = flight_df.loc[:, 0:9]
-        flight_df.columns = col_name
+        flight_df = pd.DataFrame(response['states'], columns=col_name)
         longitude = flight_df['long']
         latitude = flight_df['lat']
         call_sign = flight_df['callsign']
@@ -43,8 +37,14 @@ def fetch_flight_data():
         velocity = flight_df['velocity']
         for long, lat, sign, alt, orig, vel in zip(longitude, latitude, call_sign, altitude, origin, velocity):
             if pd.notna(alt) and pd.notna(long) and pd.notna(lat) and pd.notna(orig) and pd.notna(vel):
-                send_notification(sign, alt, orig, vel)
-                tracked_airplanes.add(sign)
+                if (
+                    abs(lat - home_lat) <= 0.06
+                    and abs(long - home_long) <= 0.06
+                    and orig != "India"
+                    and sign not in tracked_airplanes
+                ):
+                    send_notification(sign, alt, orig, vel)
+                    tracked_airplanes.add(sign)
     except JSONDecodeError as e:
         print("Error decoding JSON:", e)
 
@@ -60,7 +60,7 @@ def send_notification(call_sign, altitude, origin, velocity):
         osascript -e 'display notification "{notification_text}" sound name "{notification_sound}" with title "{notification_title}"'
         osascript -e 'open location "{tracking_url}"'
     """)
-    push = pb.push_note(notification_title, notification_text)
+
     time.sleep(10)
 
 # Main program loop
